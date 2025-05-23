@@ -1,0 +1,9 @@
+# Ignore build artifacts
+target/
+pkg/
+node_modules/
+*.wasm
+*.d.ts
+Cargo.lock
+Cargo.toml
+.cargo/
