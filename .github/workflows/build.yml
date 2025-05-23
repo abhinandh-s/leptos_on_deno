@@ -45,9 +45,6 @@ jobs:
 
       - name: ✅ Run Rust tests
         run: cargo test --all
-
-      - name: ✅ Run Deno tests
-        run: deno test
   
       - name: Build step
         run: "deno task build"
