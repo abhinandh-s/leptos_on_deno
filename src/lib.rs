@@ -1,6 +1,5 @@
 use leptos::prelude::*;
-    use wasm_bindgen::prelude::*;
-
+use wasm_bindgen::prelude::*;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -30,6 +29,7 @@ mod server {
         render_to_string(move || {
             provide_context(options.clone());
             view! { <App /> }
-        }).await
+        })
+        .await
     }
 }
