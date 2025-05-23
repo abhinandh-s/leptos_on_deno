@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: 📦 Checkout repository
@@ -24,9 +27,9 @@ jobs:
           curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
 
       - name: 🦕 Set up Deno
-        uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - name: ⚙️ Cache Cargo registry and build
         uses: actions/cache@v4
@@ -45,5 +48,14 @@ jobs:
 
       - name: ✅ Run Deno tests
         run: deno test
+  
+      - name: Build step
+        run: "deno task build"
 
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "abhinandhs-leptos"
+          entrypoint: "run.ts"
+          root: "."
   
