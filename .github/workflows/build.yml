@@ -45,9 +45,6 @@ jobs:
 
       - name: ✅ Run Rust tests
         run: cargo test --all
-  
-      - name: Build step
-        run: "deno task build"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
