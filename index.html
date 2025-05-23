@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Leptos 0.8.2 on Deno</title>
+  </head>
+  <body>
+    <div id="main"><!-- SSR content injected here --></div>
+    <script type="module">
+      import init, { render } from "./pkg/server.js";
+      await init();
+      const html = await render();
+      document.getElementById("main").innerHTML = html;
+    </script>
+  </body>
+</html>
+

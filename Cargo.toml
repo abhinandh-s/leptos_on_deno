@@ -1,0 +1,22 @@
+[package]
+name = "leptos_on_deno"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook = "0.1"
+leptos = { version = "0.8.2", features = ["ssr", "hydrate"] }
+leptos_meta = "0.8.2"
+leptos_dom = "0.8.2"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = { version = "0.4.42", features = [
+  "futures-core-03-stream",
+] }
+
+[features]
+default = []
+ssr = ["leptos/ssr"]
+hydrate = ["leptos/hydrate"]
