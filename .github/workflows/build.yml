@@ -1,0 +1,60 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: Build with Nix & wasm-pack
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Setup Cache (Nix)
+        uses: cachix/cachix-action@v14
+        with:
+          name: your-cachix-name  # optional if you use Cachix
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Cache Cargo builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run build using Nix
+        run: nix develop --command deno task build
+
+      - name: Run Rust tests
+        run: nix develop --command cargo test --all
+
+      - name: Run Deno tests
+        run: nix develop --command deno test
+
+  # Optional: Deploy to Deno Deploy
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Deploy to Deno Deploy
+  #       uses: denoland/deployctl@v1
+  #       with:
+  #         project: your-deno-project-name
+  #         entrypoint: run.ts
+  #         root: ./
+  #         token: ${{ secrets.DENO_DEPLOY_TOKEN }}
