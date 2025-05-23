@@ -22,30 +22,5 @@ jobs:
           override: true
           target: wasm32-unknown-unknown
 
-      - name: 📦 Install wasm-pack
-        run: |
-          curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
-
-      - name: 🦕 Set up Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: ⚙️ Cache Cargo registry and build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: 🏗️ Build client and server
-        run: deno task build
-
-      - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: "abhinandhs-leptos"
-          entrypoint: "run.ts"
-          root: "."
+  
+     
