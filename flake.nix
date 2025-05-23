@@ -1,5 +1,5 @@
 {
-  description = "A rusty devShell";
+  description = "A basic Rust devshell for NixOS users developing Leptos";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -7,51 +7,50 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = {
-    nixpkgs,
-    rust-overlay,
-    flake-utils,
-    ...
-  }:
+  outputs =
+    {
+      nixpkgs,
+      rust-overlay,
+      flake-utils,
+      ...
+    }:
     flake-utils.lib.eachDefaultSystem (
-      system: let
-        overlays = [
-          (import rust-overlay)
-        ];
+      system:
+      let
+        overlays = [ (import rust-overlay) ];
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-      in {
-        devShells.default = with pkgs;
-          mkShellNoCC {
-            # nativeBuildInputs is usually what you want -- tools you need to run
-            nativeBuildInputs = with pkgs.buildPackages; [
-              # pkg-config
+      in
+      with pkgs;
+      {
+        devShells.default = mkShell {
+          buildInputs =
+            [
+              gcc
+              glib
               openssl
-            ];
-            buildInputs = [
-              #  lua
-              #  unstable.lazygit
-              #  unstable.neovim
-              #  unstable.rustup
-              #  nodejs
-              rust-bin.stable.latest.default.override
-              {
-                targets = ["wasm32-unknown-unknown"];
-              }
+              pkg-config
+              cacert
+              cargo-make
+              trunk
+              (rust-bin.selectLatestNightlyWith (
+                toolchain:
+                toolchain.default.override {
+                  extensions = [
+                    "rust-src"
+                    "rust-analyzer"
+                  ];
+                  targets = [ "wasm32-unknown-unknown" ];
+                }
+              ))
+            ]
+            ++ pkgs.lib.optionals pkg.stdenv.isDarwin [
+              darwin.apple_sdk.frameworks.SystemConfiguration
             ];
 
-            GREETING = "Environment is ready!";
-
-            shellHook = ''
-              exec fish --init-command '
-              alias rm="roxide"
-              set -x PATH $PATH (set -q CARGO_HOME; and echo $CARGO_HOME; or echo ~/.cargo)/bin
-              set -x PATH $PATH (set -q RUSTUP_HOME; and echo $RUSTUP_HOME; or echo ~/.rustup)/toolchains/$RUSTC_VERSION-x86_64-unknown-linux-gnu/bin
-              echo $GREETING | ${pkgs.lolcat}/bin/lolcat
-              '
-            '';
-          };
+          shellHook = '''';
+        };
       }
     );
 }
