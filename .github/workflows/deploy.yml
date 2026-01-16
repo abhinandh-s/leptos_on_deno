@@ -29,6 +29,8 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Install wasm pack
+        run: "cargo install wasm-pack"
       - name: Build step
         run: "deno task build"
 
